@@ -3,22 +3,43 @@
 
 import { CartContext } from '@/context/CartContext';
 import Image from 'next/image';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 
 
 
 export default function ProductList({ product}) {
-   const { cart,addToCart,removeFromCart } = useContext(CartContext);  
+   const [isLoading,setIsLoading]=useState(false)
+   const { cart, addToCart, removeFromCart, increaseQuantity, decreaseQuantity } = useContext(CartContext);
+
+   // Check if the product is already in the cart using .filter()
+   const isProductInCart = () => {
+     const filteredItems = cart.filter(item => item._id === product._id);
+     console.log(filteredItems.length);
+     
+     return filteredItems.length > 0;
+   }; 
    /* const [cart,setCart]=useState([])
   const addToCart = (product) => { 
     setCart([...cart,product])
   };    */
 
-  const handleAddToCart = () => {
+  /* const handleAddToCart = () => {
       if (product) {
        addToCart(product);  
       }
-    };
+    }; */
+    const handleAddToCart = async () => {
+  if (isProductInCart()) return; // Optionally prevent action if already in cart
+  setIsLoading(true);
+  try {
+    // Simulate an async operation like adding to cart
+    await addToCart(product);
+  } catch (error) {
+    console.error('Error adding to cart:', error);
+  } finally {
+    setIsLoading(false); // Reset loading state after operation completes
+  }
+};
     const handleRemoveFromCart = (productId) => {
       console.log(productId);
       removeFromCart(productId);  
@@ -41,10 +62,14 @@ export default function ProductList({ product}) {
         <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
         <p className="text-gray-700 mb-4">{product.description}</p>
         <p className="text-gray-700 mb-4">{product.price}</p>
-        <button  onClick={handleAddToCart}  className="bg-sky-600 text-white py-2 px-4 rounded">
-          Add to Cart
+        <button 
+          onClick={handleAddToCart} 
+          className="bg-sky-600 text-white py-2 px-4 rounded" 
+          disabled={isLoading || isProductInCart()}
+         >
+               {isLoading ? 'Loading...' : isProductInCart() ? 'Already in Cart' : 'Add to Cart'}
         </button>
-      </div>
+        </div>
 
      <div className="cart mt-6">
         <h2>Cart:{cart.length}</h2>
@@ -68,7 +93,7 @@ export default function ProductList({ product}) {
               >
                 Remove
               </button>
-    </li>
+      </li>  
   ))}
         </ul>
         <div>
