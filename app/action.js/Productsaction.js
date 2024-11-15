@@ -8,16 +8,7 @@ export async function fetchProducts() {
       await dbconnect();  // Ensure DB is connected
       
       // Use lean() to return plain JavaScript objects instead of Mongoose documents
-      const products = await Product.find(); // .lean() returns plain objects
-      /* const serializedProducts = products.map(product => {
-       // Convert _id to string
-       if (product._id) {
-         product._id = product._id.toString();  // Convert ObjectId to string
-       }
- 
-       // You can add more conversions for other fields if necessary
-       return product;
-     }); */
+      const products = await Product.find(); 
      const serializedProducts = products.map(product => {
       return {
         _id: product._id.toString(),  // Convert MongoDB ObjectId to string

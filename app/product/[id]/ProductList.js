@@ -1,5 +1,6 @@
 "use client"
 
+
 import { CartContext } from '@/context/CartContext';
 import Image from 'next/image';
 import { useContext } from 'react';
@@ -7,28 +8,27 @@ import { useContext } from 'react';
 
 
 export default function ProductList({ product}) {
-  const { cart, addToCart } = useContext(CartContext);
-    /* const [cart,setCart] = useState([]); */
-    
- 
-    // Function to add item to cart
-    /* const addToCart = (product) => { 
-      setCart([...cart, product]);
-    }; */
-   /*  const { addToCart } = useCart();  */
-    const handleAddToCart = () => {
-        if (product) {
-         /*  addToCart(product);  */  // Add the product to the cart
-         console.log("add to cart");
-         addToCart(product);
-         console.log(product.name);
-         
-        }
-      };
+   const { cart,addToCart,removeFromCart } = useContext(CartContext);  
+   /* const [cart,setCart]=useState([])
+  const addToCart = (product) => { 
+    setCart([...cart,product])
+  };    */
+
+  const handleAddToCart = () => {
+      if (product) {
+       addToCart(product);  
+      }
+    };
+    const handleRemoveFromCart = (productId) => {
+      console.log(productId);
+      removeFromCart(productId);  
+      
+      
+    }; 
+     
   return (
     <>
       <div className="product-item border p-4 mb-4">
-        {/* Display Product Image */}
         <div className="product-image mb-4">
           <Image 
             src={product.image} 
@@ -38,24 +38,15 @@ export default function ProductList({ product}) {
             priority={true}
           />
         </div>
-
-        {/* Display Product Name */}
         <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
-
-        {/* Display Product Description */}
         <p className="text-gray-700 mb-4">{product.description}</p>
-
-        {/* Add to Cart Button */}
-        <button 
-          onClick={handleAddToCart} 
-          className="bg-sky-600 text-white py-2 px-4 rounded"
-        >
+        <p className="text-gray-700 mb-4">{product.price}</p>
+        <button  onClick={handleAddToCart}  className="bg-sky-600 text-white py-2 px-4 rounded">
           Add to Cart
         </button>
       </div>
 
-      {/* Optional: Display cart items for debugging */}
-      <div className="cart mt-6">
+     <div className="cart mt-6">
         <h2>Cart:{cart.length}</h2>
         <ul>
         {cart.map((item, index) => (
@@ -70,6 +61,13 @@ export default function ProductList({ product}) {
       <div>{item.name}</div>
       <div>{item.description}</div>
       <div>{item.price}</div>
+      {/* Remove Button */}
+              <button
+                onClick={() => handleRemoveFromCart(item._id)} 
+                className="text-red-500 ml-4"
+              >
+                Remove
+              </button>
     </li>
   ))}
         </ul>
@@ -79,7 +77,7 @@ export default function ProductList({ product}) {
           Total Price: ${cart.reduce((total, item) => total + item.price, 0).toFixed(2)}
         </h3>
       </div>
-      </div>
+      </div>     
     </>
   );
 }
