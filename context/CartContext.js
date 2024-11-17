@@ -38,9 +38,34 @@ export const CartProvider = ({ children }) => {
     }
   };
   
+  const increaseQuantity = (productId) => {
+    const updatedCart = cart.map(item => {
+      if (item._id === productId) {
+        return { ...item, quantity: item.quantity + 1 };
+      }
+      return item;
+    });
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+    }
+  };
+
+  // Decrease product quantity
+  const decreaseQuantity = (productId) => {
+    const updatedCart = cart.map(item => {
+      if (item._id === productId && item.quantity > 1) {
+        return { ...item, quantity: item.quantity - 1 };
+      }
+      return item;
+    });
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+    }
+  };
+
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart,increaseQuantity,decreaseQuantity }}>
       {children}
     </CartContext.Provider>
   );
